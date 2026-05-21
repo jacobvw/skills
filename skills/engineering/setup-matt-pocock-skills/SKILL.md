@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: Sets up an `## Agent skills` block in AGENTS.md/CLAUDE.md and `docs/agents/` so the engineering skills know this repo's issue tracker (GitHub, GitLab, YouTrack, or local markdown), triage label vocabulary, and domain doc layout. Run before first use of `to-issues`, `to-prd`, `triage`, `diagnose`, `tdd`, `improve-codebase-architecture`, or `zoom-out` — or if those skills appear to be missing context about the issue tracker, triage labels, or domain docs.
+description: Sets up an `## Agent skills` block in AGENTS.md/CLAUDE.md and `docs/agents/` so the engineering skills know this repo's issue tracker (GitHub, GitLab, YouTrack, or local markdown), triage label vocabulary, PRD/issue output format, and domain doc layout. Run before first use of `to-issues`, `to-prd`, `triage`, `diagnose`, `tdd`, `improve-codebase-architecture`, or `zoom-out` — or if those skills appear to be missing context about the issue tracker, triage labels, or domain docs.
 disable-model-invocation: true
 ---
 
@@ -10,6 +10,8 @@ Scaffold the per-repo configuration that the engineering skills assume:
 
 - **Issue tracker** — where issues live (GitHub by default; local markdown is also supported out of the box)
 - **Triage labels** — the strings used for the five canonical triage roles
+- **PRD format** — the section structure `to-prd` uses when writing a PRD
+- **Issue format** — the body structure `to-issues` uses for each published issue
 - **Domain docs** — where `CONTEXT.md` and ADRs live, and the consumer rules for reading them
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
@@ -29,7 +31,7 @@ Look at the current repo to understand its starting state. Read whatever exists;
 
 ### 2. Present findings and ask
 
-Summarise what's present and what's missing. Then walk the user through the three decisions **one at a time** — present a section, get the user's answer, then move to the next. Don't dump all three at once.
+Summarise what's present and what's missing. Then walk the user through the five decisions **one at a time** — present a section, get the user's answer, then move to the next. Don't dump them all at once.
 
 Assume the user does not know what these terms mean. Each section starts with a short explainer (what it is, why these skills need it, what changes if they pick differently). Then show the choices and the default.
 
@@ -59,7 +61,19 @@ The five canonical roles:
 
 Default: each role's string equals its name. Ask the user if they want to override any. If their issue tracker has no existing labels, the defaults are fine.
 
-**Section C — Domain docs.**
+**Section C — PRD format.**
+
+> Explainer: When `to-prd` writes a PRD, it follows a section structure (Problem Statement, Solution, User Stories, Implementation Decisions, Testing Decisions, Out of Scope, …). If your team writes PRDs a particular way — different sections, a required "Metrics" or "Rollout" block, a different ordering — capture that here so `to-prd` produces PRDs in your house style instead of the generic default.
+
+Show the default structure from [prd-format.md](./prd-format.md). Ask whether the user wants to keep it as-is or adjust the sections. Most repos keep the default.
+
+**Section D — Issue format.**
+
+> Explainer: When `to-issues` publishes each vertical-slice issue, it follows a body structure (Parent, What to build, Acceptance criteria, Blocked by). If your team expects different sections — an "Estimate", "Definition of done", links to designs — capture that here. Dependencies ("Blocked by") are always also materialized as native links in the tracker, per `issue-tracker.md`.
+
+Show the default structure from [issue-format.md](./issue-format.md). Ask whether the user wants to keep it as-is or adjust the sections. Most repos keep the default.
+
+**Section E — Domain docs.**
 
 > Explainer: Some skills (`improve-codebase-architecture`, `diagnose`, `tdd`) read a `CONTEXT.md` file to learn the project's domain language, and `docs/adr/` for past architectural decisions. They need to know whether the repo has one global context or multiple (e.g. a monorepo with separate frontend/backend contexts) so they look in the right place.
 
@@ -73,7 +87,7 @@ Confirm the layout:
 Show the user a draft of:
 
 - The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
-- The contents of `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/domain.md`
+- The contents of `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`, `docs/agents/prd-format.md`, `docs/agents/issue-format.md`, `docs/agents/domain.md`
 
 Let them edit before writing.
 
@@ -102,6 +116,10 @@ The block:
 
 [one-line summary of the label vocabulary]. See `docs/agents/triage-labels.md`.
 
+### PRD & issue format
+
+`to-prd` follows `docs/agents/prd-format.md`; `to-issues` follows `docs/agents/issue-format.md`.
+
 ### Domain docs
 
 [one-line summary of layout — "single-context" or "multi-context"]. See `docs/agents/domain.md`.
@@ -114,6 +132,8 @@ Then write the three docs files using the seed templates in this skill folder as
 - [issue-tracker-youtrack.md](./issue-tracker-youtrack.md) — YouTrack issue tracker (via the `youtrack` MCP)
 - [issue-tracker-local.md](./issue-tracker-local.md) — local-markdown issue tracker
 - [triage-labels.md](./triage-labels.md) — label mapping
+- [prd-format.md](./prd-format.md) — `to-prd` PRD structure → write to `docs/agents/prd-format.md`
+- [issue-format.md](./issue-format.md) — `to-issues` issue-body structure → write to `docs/agents/issue-format.md`
 - [domain.md](./domain.md) — domain doc consumer rules + layout
 
 For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch using the user's description.

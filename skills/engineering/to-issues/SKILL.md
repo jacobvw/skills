@@ -51,9 +51,11 @@ Iterate until the user approves the breakdown.
 
 ### 5. Publish the issues to the issue tracker
 
-For each approved slice, publish a new issue to the issue tracker. Use the issue body template below. These issues are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
+For each approved slice, publish a new issue to the issue tracker. If `docs/agents/issue-format.md` exists, follow the body structure defined there (this repo's house style, set up by `/setup-matt-pocock-skills`); otherwise use the default template below. These issues are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
 
 Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field.
+
+**Materialize dependencies as real links.** Recording "Blocked by" in the issue body is not enough — after the blocker and blocked issue both exist, create the actual dependency link in the tracker using the mechanism in `docs/agents/issue-tracker.md` (e.g. for YouTrack, `link_issues` with `linkType: "blocked by"` / `"depends on"`, and `"relates to"` for soft links). Trackers without native links (local markdown) fall back to the body reference only.
 
 <issue-template>
 ## Parent
